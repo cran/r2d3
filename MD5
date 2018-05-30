@@ -1,11 +1,11 @@
-d674cfb46160515fc0769124df98566b *DESCRIPTION
+b46d35af2f2f37a8111a63b40af52e8a *DESCRIPTION
 8e72ab7fc9e99e9fbe04f63f459b05a8 *LICENSE
 be21a85a88ce7e46152e71d2acbe98ed *NAMESPACE
-877e59f3f27a570a91dbd1a455b065b6 *NEWS.md
+8d23b2fcc676a30c633000b2e91511e0 *NEWS.md
 848a9c6ddebea660fd814b852b22f037 *R/convert.R
 c6a4f90211c88e0ef19a726795a199ae *R/dependencies.R
 85d92ce72e06d63f5d7248ad884ea1a9 *R/knit.R
-2194495e4f18b2b5ed38716d16cabb12 *R/publish.R
+c9097305eea6eec83d943b3f105b50d5 *R/publish.R
 02de5ad0dc7fa405e578c31c1c8c3b41 *R/reexports.R
 74ec81037edba1c0dcb5e454a618275f *R/render.R
 20f8656ac9d00c3fc8e8ad71a0388684 *R/script.R
@@ -57,7 +57,7 @@ d9e1e9dd186067e38a1dbc82bf427de0 *inst/www/d3/5.0.0/CHANGES.md
 eb4d3c4cea643623371596e3b325a89b *man/html_dependencies_d3.Rd
 ec30e4500b5af07b8c003df51ed8d1d2 *man/r2d3.Rd
 fa9e6582c56a7ba54154549178e4a943 *man/reexports.Rd
-e332fb30b23b98160298c59938063761 *man/save_d3_html.Rd
+eb03756234f73042e6e5bc626e78a003 *man/save_d3_html.Rd
 a8757cda149a6fefaa22ff78f18df9ec *man/save_d3_png.Rd
 3e70de2aaaa07dd74ece11700fed17b8 *tests/testthat.R
 8cf665e98f3ff11b4fdbff65ddf38b07 *tests/testthat/baranims.js
