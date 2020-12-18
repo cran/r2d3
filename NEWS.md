@@ -1,3 +1,13 @@
+# r2d3 0.2.5
+
+- Support for D3 v6 (@dkjoluju, #85).
+
+# r2d3 0.2.4
+
+- Update D3 v5 from 5.0.0 to 5.9.2 (#54).
+
+- Avoid width and height from changing when refreshing rendering (#59).
+
 # r2d3 0.2.3
 
 - Fix default theme when running under RStudio 1.2 (#50).

@@ -14,7 +14,7 @@ visualizations](https://d3js.org/) with R, including:
 
   - Rendering D3 scripts within the [RStudio
     Viewer](https://support.rstudio.com/hc/en-us/articles/202133558-Extending-RStudio-with-the-Viewer-Pane)
-    and [R Notebooks](https://rmarkdown.rstudio.com/r_notebooks.html)
+    and [R Notebooks](https://bookdown.org/yihui/rmarkdown/notebook.html)
 
   - Publishing D3 visualizations to the web
 
@@ -57,7 +57,7 @@ devtools::install_github("rstudio/r2d3")
 ```
 
 Next, install the [preview release of RStudio
-v1.2](https://www.rstudio.com/rstudio/download/preview/) of RStudio (you
+v1.2](https://rstudio.com/products/rstudio/download/) of RStudio (you
 need this version of RStudio to take advantage of various integrated
 tools for authoring D3 scripts with r2d3).
 
@@ -145,7 +145,7 @@ are provided automatically are:
 ## D3 Preview
 
 The [RStudio v1.2 preview
-release](https://www.rstudio.com/rstudio/download/preview/) of RStudio
+release](https://rstudio.com/products/rstudio/download/) of RStudio
 includes support for previewing D3 scripts as you write them. To try
 this out, create a D3 script using the new file menu:
 
@@ -153,7 +153,7 @@ this out, create a D3 script using the new file menu:
 
 A simple template for a D3 script (the barchart.js example shown above)
 is provided by default. You can use the **Preview** command
-(Ctrl+Shift+Center) to render the
+(Ctrl+Shift+Enter) to render the
 visualization:
 
 <img src="tools/README/rstudio_preview.png" class="screenshot" width=600/>
