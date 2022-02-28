@@ -1,44 +1,74 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 
 
 <title>Learning D3</title>
 
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 
-<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
 <style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -47,9 +77,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -106,6 +136,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
+
 <style type="text/css">body {
 background-color: #fff;
 margin: 1em auto;
@@ -116,9 +147,6 @@ padding-right: 2em;
 font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 font-size: 14px;
 line-height: 1.35;
-}
-#header {
-text-align: center;
 }
 #TOC {
 clear: both;
@@ -287,7 +315,8 @@ code > span.st { color: #d14; }
 code > span.co { color: #888888; font-style: italic; } 
 code > span.ot { color: #007020; } 
 code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
 
 
@@ -333,15 +362,15 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <h2>Coding D3 for r2d3</h2>
 <p>When you are learning D3 or translating D3 examples for use with R it’s important to keep in mind that D3 examples will generally include code to load data, create an SVG or other root element, and establish a width and height for the visualization. On the other hand with <strong>r2d3</strong>, these variables are <em>provided automatically</em> so do not need to be created. Here is some code you’ll typically see in D3 examples:</p>
 <p>Creating an SVG element to contain the visualization:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode js"><code class="sourceCode javascript"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">var</span> svg <span class="op">=</span> <span class="va">d3</span>.<span class="at">select</span>(<span class="st">&quot;body&quot;</span>).<span class="at">append</span>(<span class="st">&quot;svg&quot;</span>)<span class="op">;</span></a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> svg <span class="op">=</span> d3<span class="op">.</span><span class="fu">select</span>(<span class="st">&quot;body&quot;</span>)<span class="op">.</span><span class="fu">append</span>(<span class="st">&quot;svg&quot;</span>)<span class="op">;</span></span></code></pre></div>
 <p>Hard-coding margins, width, and height for the visualization:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode js"><code class="sourceCode javascript"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">var</span> margin <span class="op">=</span> <span class="op">{</span><span class="dt">top</span><span class="op">:</span> <span class="dv">20</span><span class="op">,</span> <span class="dt">right</span><span class="op">:</span> <span class="dv">20</span><span class="op">,</span> <span class="dt">bottom</span><span class="op">:</span> <span class="dv">70</span><span class="op">,</span> <span class="dt">left</span><span class="op">:</span> <span class="dv">40</span><span class="op">},</span></a>
-<a class="sourceLine" id="cb2-2" title="2">    width <span class="op">=</span> <span class="dv">600</span> <span class="op">-</span> <span class="va">margin</span>.<span class="at">left</span> <span class="op">-</span> <span class="va">margin</span>.<span class="at">right</span><span class="op">,</span></a>
-<a class="sourceLine" id="cb2-3" title="3">    height <span class="op">=</span> <span class="dv">300</span> <span class="op">-</span> <span class="va">margin</span>.<span class="at">top</span> <span class="op">-</span> <span class="va">margin</span>.<span class="at">bottom</span><span class="op">;</span></a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> margin <span class="op">=</span> {<span class="dt">top</span><span class="op">:</span> <span class="dv">20</span><span class="op">,</span> <span class="dt">right</span><span class="op">:</span> <span class="dv">20</span><span class="op">,</span> <span class="dt">bottom</span><span class="op">:</span> <span class="dv">70</span><span class="op">,</span> <span class="dt">left</span><span class="op">:</span> <span class="dv">40</span>}<span class="op">,</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    width <span class="op">=</span> <span class="dv">600</span> <span class="op">-</span> margin<span class="op">.</span><span class="at">left</span> <span class="op">-</span> margin<span class="op">.</span><span class="at">right</span><span class="op">,</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    height <span class="op">=</span> <span class="dv">300</span> <span class="op">-</span> margin<span class="op">.</span><span class="at">top</span> <span class="op">-</span> margin<span class="op">.</span><span class="at">bottom</span><span class="op">;</span></span></code></pre></div>
 <p>Loading data for the visualization:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode js"><code class="sourceCode javascript"><a class="sourceLine" id="cb3-1" title="1"><span class="va">d3</span>.<span class="at">csv</span>(<span class="st">&quot;bar-data.csv&quot;</span><span class="op">,</span> <span class="kw">function</span>(error<span class="op">,</span> data) <span class="op">{</span></a>
-<a class="sourceLine" id="cb3-2" title="2">  </a>
-<a class="sourceLine" id="cb3-3" title="3"><span class="op">}</span>)<span class="op">;</span></a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>d3<span class="op">.</span><span class="fu">csv</span>(<span class="st">&quot;bar-data.csv&quot;</span><span class="op">,</span> <span class="kw">function</span>(error<span class="op">,</span> data) {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
 <p>Code like the above isn’t necessary with <strong>r2d3</strong>, since the following variables are provided automatically to your D3 script:</p>
 <ul>
 <li><code>data</code> — The R data converted to JavaScript.</li>
@@ -352,17 +381,17 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <li><code>theme</code> — Colors for the current theme</li>
 </ul>
 <p>For example, here’s a simple <strong>r2d3</strong> script which makes use of these automatically provided variables:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode js"><code class="sourceCode javascript"><a class="sourceLine" id="cb4-1" title="1"><span class="co">// !preview r2d3 data=c(0.3, 0.6, 0.8, 0.95, 0.40, 0.20)</span></a>
-<a class="sourceLine" id="cb4-2" title="2"></a>
-<a class="sourceLine" id="cb4-3" title="3"><span class="kw">var</span> barHeight <span class="op">=</span> <span class="va">Math</span>.<span class="at">floor</span>(height / <span class="va">data</span>.<span class="at">length</span>)<span class="op">;</span></a>
-<a class="sourceLine" id="cb4-4" title="4"></a>
-<a class="sourceLine" id="cb4-5" title="5"><span class="va">svg</span>.<span class="at">selectAll</span>(<span class="st">&#39;rect&#39;</span>)</a>
-<a class="sourceLine" id="cb4-6" title="6">  .<span class="at">data</span>(data)</a>
-<a class="sourceLine" id="cb4-7" title="7">  .<span class="at">enter</span>().<span class="at">append</span>(<span class="st">&#39;rect&#39;</span>)</a>
-<a class="sourceLine" id="cb4-8" title="8">    .<span class="at">attr</span>(<span class="st">&#39;width&#39;</span><span class="op">,</span> <span class="kw">function</span>(d) <span class="op">{</span> <span class="cf">return</span> d <span class="op">*</span> width<span class="op">;</span> <span class="op">}</span>)</a>
-<a class="sourceLine" id="cb4-9" title="9">    .<span class="at">attr</span>(<span class="st">&#39;height&#39;</span><span class="op">,</span> barHeight)</a>
-<a class="sourceLine" id="cb4-10" title="10">    .<span class="at">attr</span>(<span class="st">&#39;y&#39;</span><span class="op">,</span> <span class="kw">function</span>(d<span class="op">,</span> i) <span class="op">{</span> <span class="cf">return</span> i <span class="op">*</span> barHeight<span class="op">;</span> <span class="op">}</span>)</a>
-<a class="sourceLine" id="cb4-11" title="11">    .<span class="at">attr</span>(<span class="st">&#39;fill&#39;</span><span class="op">,</span> <span class="st">&#39;steelblue&#39;</span>)<span class="op">;</span></a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// !preview r2d3 data=c(0.3, 0.6, 0.8, 0.95, 0.40, 0.20)</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> barHeight <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">floor</span>(height <span class="op">/</span> data<span class="op">.</span><span class="at">length</span>)<span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>svg<span class="op">.</span><span class="fu">selectAll</span>(<span class="st">&#39;rect&#39;</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">data</span>(data)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">enter</span>()<span class="op">.</span><span class="fu">append</span>(<span class="st">&#39;rect&#39;</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">attr</span>(<span class="st">&#39;width&#39;</span><span class="op">,</span> <span class="kw">function</span>(d) { <span class="cf">return</span> d <span class="op">*</span> width<span class="op">;</span> })</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">attr</span>(<span class="st">&#39;height&#39;</span><span class="op">,</span> barHeight)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">attr</span>(<span class="st">&#39;y&#39;</span><span class="op">,</span> <span class="kw">function</span>(d<span class="op">,</span> i) { <span class="cf">return</span> i <span class="op">*</span> barHeight<span class="op">;</span> })</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">attr</span>(<span class="st">&#39;fill&#39;</span><span class="op">,</span> <span class="st">&#39;steelblue&#39;</span>)<span class="op">;</span></span></code></pre></div>
 </div>
 
 

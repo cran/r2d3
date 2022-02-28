@@ -1,44 +1,74 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 
 
 <title>R to D3 Data Conversion</title>
 
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 
-<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
 <style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -47,9 +77,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -106,6 +136,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
+
 <style type="text/css">body {
 background-color: #fff;
 margin: 1em auto;
@@ -116,9 +147,6 @@ padding-right: 2em;
 font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 font-size: 14px;
 line-height: 1.35;
-}
-#header {
-text-align: center;
 }
 #TOC {
 clear: both;
@@ -287,7 +315,8 @@ code > span.st { color: #d14; }
 code > span.co { color: #888888; font-style: italic; } 
 code > span.ot { color: #007020; } 
 code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
 
 
@@ -306,17 +335,17 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <div id="default-conversion" class="section level2">
 <h2>Default conversion</h2>
-<p>R objects provided as <code>data</code> for D3 visualizations are converted to JSON using the <a href="https://www.rdocumentation.org/packages/jsonlite/versions/1.5/topics/toJSON%2C%20fromJSON">jsonlite::toJSON()</a> function, and use the same default serialization behavior as <a href="https://shiny.rstudio.com">Shiny</a> and <a href="http://www.htmlwidgets.org/develop_advanced.html#custom-json-serializer">htmlwidgets</a>.</p>
+<p>R objects provided as <code>data</code> for D3 visualizations are converted to JSON using the <a href="https://www.rdocumentation.org/packages/jsonlite/versions/1.5/topics/toJSON%2C%20fromJSON">jsonlite::toJSON()</a> function, and use the same default serialization behavior as <a href="https://shiny.rstudio.com">Shiny</a> and <a href="https://www.htmlwidgets.org/develop_advanced.html#custom-json-serializer">htmlwidgets</a>.</p>
 <p>This corresponds to the following call to <code>jsonlite::toJSON()</code>:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1">jsonlite<span class="op">::</span><span class="kw">toJSON</span>(</a>
-<a class="sourceLine" id="cb1-2" title="2">  <span class="dt">dataframe =</span> <span class="st">&quot;columns&quot;</span>, <span class="dt">null =</span> <span class="st">&quot;null&quot;</span>, <span class="dt">na =</span> <span class="st">&quot;null&quot;</span>, <span class="dt">auto_unbox =</span> <span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb1-3" title="3">  <span class="dt">digits =</span> <span class="kw">getOption</span>(<span class="st">&quot;shiny.json.digits&quot;</span>, <span class="dv">16</span>), <span class="dt">use_signif =</span> <span class="ot">TRUE</span>, <span class="dt">force =</span> <span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb1-4" title="4">  <span class="dt">POSIXt =</span> <span class="st">&quot;ISO8601&quot;</span>, <span class="dt">UTC =</span> <span class="ot">TRUE</span>, <span class="dt">rownames =</span> <span class="ot">FALSE</span>, <span class="dt">keep_vec_names =</span> <span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb1-5" title="5">  <span class="dt">json_verabitm =</span> <span class="ot">TRUE</span></a>
-<a class="sourceLine" id="cb1-6" title="6">)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>jsonlite<span class="sc">::</span><span class="fu">toJSON</span>(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataframe =</span> <span class="st">&quot;columns&quot;</span>, <span class="at">null =</span> <span class="st">&quot;null&quot;</span>, <span class="at">na =</span> <span class="st">&quot;null&quot;</span>, <span class="at">auto_unbox =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits =</span> <span class="fu">getOption</span>(<span class="st">&quot;shiny.json.digits&quot;</span>, <span class="dv">16</span>), <span class="at">use_signif =</span> <span class="cn">TRUE</span>, <span class="at">force =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">POSIXt =</span> <span class="st">&quot;ISO8601&quot;</span>, <span class="at">UTC =</span> <span class="cn">TRUE</span>, <span class="at">rownames =</span> <span class="cn">FALSE</span>, <span class="at">keep_vec_names =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">json_verabitm =</span> <span class="cn">TRUE</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <div id="data-frames" class="section level4">
 <h4>Data frames</h4>
-<p>Data frames are serialized with a columns orientation as that is a more compact over the wire representation than rows orientation. When the data frame gets to the client <strong>r2d3</strong> calls the <a href="http://www.htmlwidgets.org/develop_advanced.html#htmlwidgets.dataframetod3">HTMLWidgets.dataframeToD3()</a> method to transform the data to a D3-friendly rows orientation.</p>
+<p>Data frames are serialized with a columns orientation as that is a more compact over the wire representation than rows orientation. When the data frame gets to the client <strong>r2d3</strong> calls the <a href="https://www.htmlwidgets.org/develop_advanced.html#htmlwidgets.dataframetod3">HTMLWidgets.dataframeToD3()</a> method to transform the data to a D3-friendly rows orientation.</p>
 <p>Here is an example of the JSON columns-based representation of an R data frame:</p>
 <pre><code>{
   &quot;Sepal.Length&quot;: [5.1, 4.9, 4.7],
@@ -354,19 +383,19 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <div id="custom-conversion" class="section level2">
 <h2>Custom conversion</h2>
 <p>If you don’t like the default JSON conversion provided for <code>data</code>, you can write your own function that uses <a href="https://CRAN.R-project.org/package=jsonlite">jsonlite</a> to perform a custom conversion. For example:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">data_to_json &lt;-<span class="st"> </span><span class="cf">function</span>(data) {</a>
-<a class="sourceLine" id="cb4-2" title="2">  jsonlite<span class="op">::</span><span class="kw">toJSON</span>(data, <span class="dt">dataframe =</span> <span class="st">&quot;rows&quot;</span>, <span class="dt">auto_unbox =</span> <span class="ot">FALSE</span>, <span class="dt">rownames =</span> <span class="ot">TRUE</span>)</a>
-<a class="sourceLine" id="cb4-3" title="3">}</a>
-<a class="sourceLine" id="cb4-4" title="4"></a>
-<a class="sourceLine" id="cb4-5" title="5"><span class="kw">r2d3</span>(<span class="dt">data =</span> <span class="kw">data_to_json</span>(x), <span class="dt">script =</span> <span class="st">&quot;barchart.js&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>data_to_json <span class="ot">&lt;-</span> <span class="cf">function</span>(data) {</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  jsonlite<span class="sc">::</span><span class="fu">toJSON</span>(data, <span class="at">dataframe =</span> <span class="st">&quot;rows&quot;</span>, <span class="at">auto_unbox =</span> <span class="cn">FALSE</span>, <span class="at">rownames =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">r2d3</span>(<span class="at">data =</span> <span class="fu">data_to_json</span>(x), <span class="at">script =</span> <span class="st">&quot;barchart.js&quot;</span>)</span></code></pre></div>
 <p>When a value returned from <code>jsonlite::toJSON()</code> is passed as the <code>data</code> argument <strong>r2d3</strong> won’t attempt any additional conversion or transformation of the value.</p>
 </div>
 <div id="s3-conversion-method" class="section level2">
 <h2>S3 conversion method</h2>
 <p>You can implement the <code>as_d3_data()</code> S3 method to provide custom converters for any R class. For example, you could create an S3 method for the <code>igraph</code> class to convert data into a JSON that is optimized for rendering by a D3 network visualization:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">as_d3_data.igraph &lt;-<span class="st"> </span><span class="cf">function</span>(x, ...) {</a>
-<a class="sourceLine" id="cb5-2" title="2">  <span class="co"># code to serialize igraph to D3 network friendly JSON </span></a>
-<a class="sourceLine" id="cb5-3" title="3">}</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>as_d3_data.igraph <span class="ot">&lt;-</span> <span class="cf">function</span>(x, ...) {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># code to serialize igraph to D3 network friendly JSON </span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 </div>
 
 
